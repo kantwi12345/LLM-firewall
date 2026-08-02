@@ -11,6 +11,7 @@ Run with: uvicorn main:app --host 0.0.0.0 --port 8000
 
 import time
 import io
+import os
 from contextlib import asynccontextmanager
 from typing import Optional
 
@@ -22,7 +23,7 @@ from pydantic import BaseModel
 import db
 from auth import verify_api_key
 from detection_engine import SemanticMatcher, analyze, CATEGORIES
-from embedding_text_model import EmbeddingTextDefender
+from text_model import TextDefender
 from synonym_expansion import find_synonym_matches
 
 # ---------------------------------------------------------------------
@@ -38,9 +39,16 @@ state = {}
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     db.init_db()
-    state["matcher"] = SemanticMatcher()
+    # On memory-constrained deployments (e.g. Render's free 512MB tier),
+    # loading sentence-transformers (which pulls in torch) can exceed
+    # available memory before a single request even arrives. Setting
+    # AI_SOC_LOW_MEMORY=true skips that and uses the lighter TF-IDF
+    # fallback instead - a real trade-off (less accurate semantic
+    # similarity), not a workaround that pretends nothing changed.
+    low_memory = os.environ.get("AI_SOC_LOW_MEMORY", "false").lower() == "true"
+    state["matcher"] = SemanticMatcher(force_fallback=low_memory)
     try:
-        state["text_model"] = EmbeddingTextDefender("text_defender_embed.npy")
+        state["text_model"] = TextDefender("text_defender.npy", "vectorizer.pkl")
     except Exception:
         state["text_model"] = None
     state["defender"] = None
