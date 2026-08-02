@@ -1,0 +1,11 @@
+fastapi>=0.140
+uvicorn[standard]>=0.30
+python-multipart
+numpy
+pandas
+scikit-learn
+sentence-transformers
+pypdf
+openai-whisper
+imageio-ffmpeg
+sentence-transformers

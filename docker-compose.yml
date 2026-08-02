@@ -1,0 +1,30 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      # REQUIRED - generate your own with:
+      #   python3 -c "import secrets; print(secrets.token_hex(32))"
+      # then set it in a .env file next to this docker-compose.yml
+      # (see .env.example), or export it before running docker compose.
+      - AI_SOC_API_KEY=${AI_SOC_API_KEY}
+      - AI_SOC_DB_PATH=/app/data/ai_soc.db
+    volumes:
+      # persists the SQLite database across container restarts
+      - backend_data:/app/data
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  backend_data:
