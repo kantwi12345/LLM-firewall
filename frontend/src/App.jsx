@@ -1,24 +1,25 @@
 import { useState, useEffect } from 'react'
 import './theme.css'
 import api from './api'
-import Sidebar from './components/Sidebar'
 import LiveFirewall from './components/LiveFirewall'
 import DemoChallenge from './components/DemoChallenge'
 import DocumentVoice from './components/DocumentVoice'
 import Analytics from './components/Analytics'
 import CompareModes from './components/CompareModes'
 import ThreatIntel from './components/ThreatIntel'
-import ParticleField from './components/ParticleField'
-import AnimatedNumber from './components/AnimatedNumber'
+import NetworkLayer from './components/NetworkLayer'
 
-const TABS = [
-  ['live', '🛡️ Live Firewall'],
-  ['demo', '🎯 Demo & Challenge'],
-  ['media', '📄🎙️ Document & Voice'],
-  ['analytics', '📊 Analytics & Logs'],
-  ['compare', '🧪 Compare Modes'],
-  ['intel', '📖 Threat Intel'],
+const NAV_ITEMS = [
+  ['live', 'Live Firewall', '◆'],
+  ['demo', 'Demo & Challenge', '▶'],
+  ['media', 'Document & Voice', '▤'],
+  ['analytics', 'Analytics & Logs', '▦'],
+  ['compare', 'Compare Modes', '▥'],
+  ['network', 'Network Layer', '◈'],
+  ['intel', 'Threat Intel', '▧'],
 ]
+
+const PAGE_TITLES = Object.fromEntries(NAV_ITEMS.map(([k, l]) => [k, l]))
 
 export default function App() {
   const [tab, setTab] = useState('live')
@@ -43,56 +44,74 @@ export default function App() {
   const bumpRefresh = () => setRefreshKey(k => k + 1)
 
   return (
-    <div>
-      <ParticleField count={20} />
-      <Sidebar apiKey={apiKey} setApiKey={setApiKey} backendUrl={import.meta.env.VITE_API_URL || 'http://localhost:8000'} health={health} />
-      <div className="main-content">
-        <div className="app">
-          <h1><span className="shield-icon">🛡️</span> AI-SOC — Prompt Injection Firewall</h1>
-          <p className="subtitle">
-            <span className={`status-dot ${health?.status === 'ok' ? 'connected' : 'error'}`}></span>
-            A layered defense system monitoring, analyzing, and blocking malicious prompts in real time.
-          </p>
-
-          {apiKey && (
-            <div className="stat-row">
-              <div className="stat-card"><div className="value"><AnimatedNumber value={quickStats.total} /></div><div className="label">Analyzed</div></div>
-              <div className="stat-card"><div className="value" style={{ color: 'var(--safe)' }}><AnimatedNumber value={quickStats.safe} /></div><div className="label">Safe</div></div>
-              <div className="stat-card"><div className="value" style={{ color: 'var(--warn)' }}><AnimatedNumber value={quickStats.suspicious} /></div><div className="label">Suspicious</div></div>
-              <div className="stat-card"><div className="value" style={{ color: 'var(--danger)' }}><AnimatedNumber value={quickStats.blocked} /></div><div className="label">Blocked</div></div>
-              <div className="stat-card"><div className="value">{health?.text_model_loaded ? '🟢' : '🟡'}</div><div className="label">System Health</div></div>
-            </div>
-          )}
-
-          {!apiKey && (
-            <div className="card" style={{ borderColor: 'var(--warn)' }}>
-              <p className="error-text" style={{ color: 'var(--warn)' }}>
-                Enter your API key in the sidebar to use the dashboard.
-              </p>
-            </div>
-          )}
-
-          <div className="tabs">
-            {TABS.map(([key, label]) => (
-              <button
-                key={key}
-                className={`tab ${tab === key ? 'active' : ''}`}
-                onClick={() => setTab(key)}
-              >
-                {label}
-              </button>
-            ))}
+    <div className="app-shell">
+      <nav className="nav-rail">
+        <div className="nav-brand">
+          <div className="logo-mark">AI</div>
+          <div>
+            <div className="brand-text">AI-SOC</div>
+            <div className="brand-sub">Prompt Injection Firewall</div>
           </div>
+        </div>
 
-          {apiKey && (
-            <div className="tab-content" key={tab}>
-              {tab === 'live' && <LiveFirewall apiKey={apiKey} onAnalyzed={bumpRefresh} />}
-              {tab === 'demo' && <DemoChallenge apiKey={apiKey} onAnalyzed={bumpRefresh} />}
-              {tab === 'media' && <DocumentVoice apiKey={apiKey} onAnalyzed={bumpRefresh} />}
-              {tab === 'analytics' && <Analytics apiKey={apiKey} refreshKey={refreshKey} />}
-              {tab === 'compare' && <CompareModes apiKey={apiKey} />}
-              {tab === 'intel' && <ThreatIntel apiKey={apiKey} />}
+        <div className="nav-section-label">Monitor</div>
+        {NAV_ITEMS.map(([key, label, icon]) => (
+          <div
+            key={key}
+            className={`nav-item ${tab === key ? 'active' : ''}`}
+            onClick={() => setTab(key)}
+          >
+            <span className="nav-icon">{icon}</span>
+            {label}
+          </div>
+        ))}
+
+        <div className="nav-footer">
+          <label className="hint-text">API Key</label>
+          <input
+            type="password"
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
+            placeholder="Enter API key"
+            style={{ marginTop: 4 }}
+          />
+        </div>
+      </nav>
+
+      <div className="main-area">
+        <div className="top-bar">
+          <h1>{PAGE_TITLES[tab]}</h1>
+          <span className="status-pill">
+            <span className={`status-dot ${health?.status === 'ok' ? 'connected' : 'error'}`}></span>
+            {health?.status === 'ok' ? 'Connected' : health ? 'Connection error' : 'Checking...'}
+          </span>
+        </div>
+
+        <div className="content">
+          {!apiKey ? (
+            <div className="card" style={{ borderLeft: '3px solid var(--warning)' }}>
+              <p className="hint-text">Enter your API key in the left panel to use the console.</p>
             </div>
+          ) : (
+            <>
+              <div className="metric-row">
+                <div className="metric-card"><div className="metric-value">{quickStats.total}</div><div className="metric-label">Analyzed</div></div>
+                <div className="metric-card"><div className="metric-value" style={{ color: 'var(--success)' }}>{quickStats.safe}</div><div className="metric-label">Safe</div></div>
+                <div className="metric-card"><div className="metric-value" style={{ color: 'var(--warning)' }}>{quickStats.suspicious}</div><div className="metric-label">Suspicious</div></div>
+                <div className="metric-card"><div className="metric-value" style={{ color: 'var(--danger)' }}>{quickStats.blocked}</div><div className="metric-label">Blocked</div></div>
+                <div className="metric-card"><div className="metric-value">{health?.text_model_loaded ? 'Online' : 'Degraded'}</div><div className="metric-label">System Health</div></div>
+              </div>
+
+              <div className="tab-content" key={tab}>
+                {tab === 'live' && <LiveFirewall apiKey={apiKey} onAnalyzed={bumpRefresh} />}
+                {tab === 'demo' && <DemoChallenge apiKey={apiKey} onAnalyzed={bumpRefresh} />}
+                {tab === 'media' && <DocumentVoice apiKey={apiKey} onAnalyzed={bumpRefresh} />}
+                {tab === 'analytics' && <Analytics apiKey={apiKey} refreshKey={refreshKey} />}
+                {tab === 'compare' && <CompareModes apiKey={apiKey} />}
+                {tab === 'network' && <NetworkLayer apiKey={apiKey} />}
+                {tab === 'intel' && <ThreatIntel apiKey={apiKey} />}
+              </div>
+            </>
           )}
         </div>
       </div>
