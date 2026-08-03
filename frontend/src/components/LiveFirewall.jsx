@@ -2,12 +2,12 @@ import { useState } from 'react'
 import api from '../api'
 
 const LAYER_LABELS = [
-  ['category_regex_score', '1. Exact / Regex Phrase Matching'],
-  ['synonym_score', '2. Synonym Expansion'],
-  ['obfuscation_score', '3. Obfuscation Detection & Decode'],
-  ['semantic_similarity', '4. Semantic Similarity'],
-  ['trained_model_score', '5. Trained Classifier (Intent)'],
-  ['threat_score', '6. Threat Scoring (combined)'],
+  ['category_regex_score', 'Exact / Regex Phrase Matching'],
+  ['synonym_score', 'Synonym Expansion'],
+  ['obfuscation_score', 'Obfuscation Detection & Decode'],
+  ['semantic_similarity', 'Semantic Similarity'],
+  ['trained_model_score', 'Trained Classifier (Intent)'],
+  ['threat_score', 'Threat Scoring (Combined)'],
 ]
 
 function badgeClass(score) {
@@ -19,12 +19,12 @@ function badgeClass(score) {
 
 function resultBanner(classification) {
   if (classification === 'blocked') {
-    return { color: '#ff3c50', title: '⛔ ACCESS DENIED — Threat Detected', sub: 'Stopped before reaching the protected system.' }
+    return { color: 'var(--danger)', title: 'Access Denied — Threat Detected', sub: 'Request was stopped before reaching the protected system.' }
   }
   if (classification === 'suspicious') {
-    return { color: '#ffc400', title: '⚠️ FLAGGED — Sanitized & Monitored', sub: 'Allowed through with a suspicion flag attached.' }
+    return { color: 'var(--warning)', title: 'Flagged — Monitored', sub: 'Allowed through with a suspicion flag attached to the log entry.' }
   }
-  return { color: '#00e696', title: '✔ Prompt Verified — Forwarding to Protected System', sub: 'No malicious intent detected.' }
+  return { color: 'var(--success)', title: 'Verified — Forwarded to Protected System', sub: 'No malicious intent detected.' }
 }
 
 export default function LiveFirewall({ apiKey, onAnalyzed }) {
@@ -67,19 +67,19 @@ export default function LiveFirewall({ apiKey, onAnalyzed }) {
           />
           <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
             <button onClick={handleAnalyze} disabled={loading}>
-              {loading ? 'Analyzing...' : '🔍 Analyze'}
+              {loading ? 'Analyzing...' : 'Analyze'}
             </button>
-            <button className="secondary" onClick={handleClear}>🗑️ Clear</button>
+            <button className="secondary" onClick={handleClear}>Clear</button>
           </div>
-          {loading && <div className="scanning-bar"></div>}
+          {loading && <div className="loading-bar"></div>}
           {error && <p className="error-text">{error}</p>}
         </div>
 
         <div className="card">
           <h3>Multi-Layer Defense Engine</h3>
-          {LAYER_LABELS.map(([key, label]) => (
+          {LAYER_LABELS.map(([key, label], i) => (
             <div className="layer-row" key={key}>
-              <span className="name">{label}</span>
+              <span className="name">{i + 1}. {label}</span>
               <span className={`badge ${result ? badgeClass(result[key]) : 'badge-idle'}`}>
                 {result ? (result[key] ?? 0).toFixed(2) : 'idle'}
               </span>
@@ -89,7 +89,7 @@ export default function LiveFirewall({ apiKey, onAnalyzed }) {
             <div className="layer-row">
               <span className="name">7. Decision Engine</span>
               <span className={`badge ${badgeClass(result.classification === 'blocked' ? 1 : result.classification === 'suspicious' ? 0.5 : 0)}`}>
-                {result.classification.toUpperCase()}
+                {result.classification}
               </span>
             </div>
           )}
@@ -101,8 +101,8 @@ export default function LiveFirewall({ apiKey, onAnalyzed }) {
           {(() => {
             const b = resultBanner(result.classification)
             return (
-              <div className="result-banner card" style={{ borderColor: b.color }}>
-                <h3 style={{ color: b.color, margin: 0 }}>{b.title}</h3>
+              <div className="result-banner" style={{ borderLeftColor: b.color }}>
+                <h3 style={{ color: b.color }}>{b.title}</h3>
                 <p className="hint-text" style={{ margin: '4px 0 0' }}>{b.sub}</p>
               </div>
             )

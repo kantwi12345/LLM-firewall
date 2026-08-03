@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { BarChart, Bar, PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import api from '../api'
 
-const COLORS = ['#00e696', '#ffc400', '#ff3c50', '#4de8ff', '#a78bfa', '#f472b6']
+const COLORS = ['#3fb950', '#d29922', '#f85149', '#2f81f7', '#8957e5', '#db61a2']
 
 export default function Analytics({ apiKey, refreshKey }) {
   const [stats, setStats] = useState(null)
@@ -68,9 +68,9 @@ export default function Analytics({ apiKey, refreshKey }) {
           <h3>Decisions</h3>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={decisionData}>
-              <XAxis dataKey="name" stroke="#8fa3b8" />
-              <YAxis stroke="#8fa3b8" />
-              <Tooltip contentStyle={{ background: '#101826', border: '1px solid #1f3a52' }} />
+              <XAxis dataKey="name" stroke="#8b949e" />
+              <YAxis stroke="#8b949e" />
+              <Tooltip contentStyle={{ background: '#151b26', border: '1px solid #24303f', fontSize: 12 }} />
               <Bar dataKey="value">
                 {decisionData.map((entry, i) => <Cell key={i} fill={COLORS[i]} />)}
               </Bar>
@@ -85,7 +85,7 @@ export default function Analytics({ apiKey, refreshKey }) {
                 <Pie data={categoryData} dataKey="value" nameKey="name" outerRadius={90} label>
                   {categoryData.map((entry, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                 </Pie>
-                <Tooltip contentStyle={{ background: '#101826', border: '1px solid #1f3a52' }} />
+                <Tooltip contentStyle={{ background: '#151b26', border: '1px solid #24303f', fontSize: 12 }} />
               </PieChart>
             </ResponsiveContainer>
           ) : <p className="hint-text">No categorized threats yet.</p>}
@@ -96,10 +96,10 @@ export default function Analytics({ apiKey, refreshKey }) {
         <h3>Threat Score Trend</h3>
         <ResponsiveContainer width="100%" height={200}>
           <LineChart data={trendData}>
-            <XAxis dataKey="i" stroke="#8fa3b8" />
-            <YAxis stroke="#8fa3b8" domain={[0, 1]} />
-            <Tooltip contentStyle={{ background: '#101826', border: '1px solid #1f3a52' }} />
-            <Line type="monotone" dataKey="threat_score" stroke="#4de8ff" dot={false} />
+            <XAxis dataKey="i" stroke="#8b949e" />
+            <YAxis stroke="#8b949e" domain={[0, 1]} />
+            <Tooltip contentStyle={{ background: '#151b26', border: '1px solid #24303f', fontSize: 12 }} />
+            <Line type="monotone" dataKey="threat_score" stroke="#2f81f7" dot={false} />
           </LineChart>
         </ResponsiveContainer>
       </div>

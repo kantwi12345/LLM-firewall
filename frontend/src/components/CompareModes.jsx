@@ -25,7 +25,7 @@ export default function CompareModes({ apiKey }) {
 
   return (
     <div className="card">
-      <h3>🧪 Compare Detection Modes</h3>
+      <h3>Compare Detection Modes</h3>
       <p className="hint-text">See how the same prompt scores under keyword-only, semantic-only, and the full hybrid system.</p>
       <textarea
         rows={3}
@@ -39,7 +39,7 @@ export default function CompareModes({ apiKey }) {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginTop: 16 }}>
           {modes.map(([name, data]) => (
             <div key={name} className="card" style={{
-              borderColor: data.classification === 'blocked' ? 'var(--danger)' : data.classification === 'suspicious' ? 'var(--warn)' : 'var(--safe)'
+              borderColor: data.classification === 'blocked' ? 'var(--danger)' : data.classification === 'suspicious' ? 'var(--warning)' : 'var(--success)'
             }}>
               <b style={{ fontSize: 13 }}>{name}</b>
               <div style={{ fontSize: 22, margin: '8px 0' }}>{data.score.toFixed(2)}</div>

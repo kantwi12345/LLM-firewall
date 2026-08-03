@@ -22,12 +22,12 @@ export default function ThreatIntel({ apiKey }) {
 
   return (
     <div className="card">
-      <h3>📖 Threat Intelligence Knowledge Base</h3>
+      <h3>Threat Intelligence Knowledge Base</h3>
       {Object.entries(INTEL).map(([term, desc]) => (
         <p key={term}><b>{term}</b> — {desc}</p>
       ))}
 
-      <hr style={{ borderColor: '#1f3a52', margin: '16px 0' }} />
+      <hr style={{ borderColor: 'var(--border)', margin: '16px 0' }} />
       <h3>Recognized Threat Categories in This System</h3>
       {categories && Object.entries(categories).map(([cat, spec]) => (
         <div key={cat} className="layer-row">

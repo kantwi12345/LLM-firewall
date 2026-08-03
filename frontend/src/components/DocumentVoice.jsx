@@ -68,7 +68,7 @@ export default function DocumentVoice({ apiKey, onAnalyzed }) {
   return (
     <div className="two-col">
       <div className="card">
-        <h3>📄 Document Analysis</h3>
+        <h3>Document Analysis</h3>
         <p className="hint-text">
           Upload a .txt or .pdf file. Its full text is extracted and analyzed —
           a direct test of Indirect Injection.
@@ -87,15 +87,15 @@ export default function DocumentVoice({ apiKey, onAnalyzed }) {
       </div>
 
       <div className="card">
-        <h3>🎙️ Voice Input</h3>
+        <h3>Voice Input</h3>
         <p className="hint-text">
           Record using your browser's microphone. Transcribed via Whisper on the backend,
           then analyzed the same way as typed input.
         </p>
         {!recording ? (
-          <button onClick={startRecording} disabled={voiceLoading}>🎙️ Start Recording</button>
+          <button onClick={startRecording} disabled={voiceLoading}>Start Recording</button>
         ) : (
-          <button onClick={stopRecording} style={{ background: 'var(--danger)' }}>⏹ Stop Recording</button>
+          <button onClick={stopRecording} style={{ background: 'var(--danger)' }}>Stop Recording</button>
         )}
         {voiceLoading && <p className="hint-text">Transcribing...</p>}
         {voiceError && <p className="error-text">{voiceError}</p>}
